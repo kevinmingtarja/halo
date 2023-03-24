@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dnssd
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu-sleep-deployment
+  namespace: dnssd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ubuntu-sleep
+  template:
+    metadata:
+      labels:
+        app: ubuntu-sleep
+    spec:
+      containers:
+        - name: ubuntu
+          image: ubuntu
+          command: ["sleep", "infinity"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-sleep-service
+  namespace: dnssd
+spec:
+  selector:
+    app: ubuntu-sleep
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+  clusterIP: None
